@@ -1,0 +1,100 @@
+#setwd("D://RoH")
+
+setwd("/Users/heatherclendenin/RoH/detectRuns")
+#setwd("/home/hrclndnn/PlinkROH/Uarct")
+#install.packages(detectRUNS)
+library(detectRUNS)
+install.packages("readxl")
+library(readxl)
+library(ggplot2)
+
+gen <- ("/Users/heatherclendenin/RoH/detectRuns/Uarct.ped")
+map <- ("/Users/heatherclendenin/RoH/detectRuns/Uarct.map.namefix.txt")
+
+#for hpc
+#gen <- ("/home/hrclndnn/PlinkROH/Uarct/Uarct.ped")
+#map <- ("/home/hrclndnn/PlinkROH/Uarct/Uarct.map.namefix.txt")
+
+
+
+s <- slidingRUNS.run(
+  genotypeFile = gen,
+  mapFile = map,
+  windowSize = 15,
+  threshold = 0.05,
+  minSNP = 100,
+  ROHet = F,
+  maxOppWindow = 1, 
+  maxMissWindow = 1,
+  maxGap = 10^6, 
+  minLengthBps = 250000, 
+  minDensity = 1/10^3, # SNP/kbps
+  maxOppRun = NULL,
+  maxMissRun = NULL
+)
+
+summaryList <- summaryRuns(
+  runs = s, mapFile = map, genotypeFile = gen, Class = 6, snpInRuns = TRUE)
+
+#plot_Runs(runs = s)
+
+plot_Runs(s)
+
+View(summaryList$summary_ROH_count)
+write_xlsx(summaryList$summary_ROH_count_chr, "Uarct_ROH_count_chr.xlsx")
+write_xlsx(summaryList$summary_ROH_percentage_chr, "Uarct_ROH_percentage_chr.xlsx")
+write_xlsx(summaryList$summary_ROH_count, "Uarct_ROH_count.xlsx")
+write_xlsx(summaryList$summary_ROH_percentage, "Uarct_ROH_percentage.xlsx")
+write_xlsx(summaryList$summary_ROH_mean_chr, "Uarct_ROH_mean_chr.xlsx")
+write_xlsx(summaryList$summary_ROH_mean_class, "Uarct_ROH_mean_class.xlsx")
+write_xlsx(summaryList$result_Froh_genome_wide, "Uarct_ROH_Froh_genome_wide.xlsx")
+write_xlsx(summaryList$result_Froh_chromosome_wide, "Uarct_ROH_Froh_chromosome_wide.xlsx")
+write_xlsx(summaryList$result_Froh_class, "Uarct_ROH_Froh_class.xlsx")
+write_xlsx(summaryList$SNPinRun, "Uarct_ROH_SNPinRun.xlsx.xlsx")
+
+
+ROH_popsumm <- Uarct_ROH_popsumm
+data <- ROH_popsumm
+
+ROHdata <- data.frame(data)
+
+ROHdata <- data.frame(ROH_popsumm)
+
+#ggplot(ROHdata, aes(x=numROH, y=sumROH, colour=Population)) +
+#  geom_point(size=3, alpha=0.7)
+
+Uarct_numXfROH <- ggplot(ROHdata, aes(x=numROH, y=FROH_genome, colour=Population)) +
+  geom_point(size=3, alpha=0.8)+                                
+  scale_color_manual(values = c("lower48" = "sienna",
+                                "AK" = "lightpink4", 
+                                "Japan" = "plum3",
+                                "Euro" = "orange", 
+                                "Sweden" = "yellow3",
+                                "Finland" = "olivedrab"))
+
+Uarct_numXfROH
+
+Uarct_numXsumROH <- ggplot(ROHdata, aes(x=numROH, y=sumROH, colour=Population)) +
+  geom_point(size=3, alpha=0.8) +                                
+  scale_color_manual(values = c("lower48" = "sienna",
+                                "AK" = "lightpink4", 
+                                "Japan" = "plum3",
+                                "Euro" = "orange", 
+                                "Sweden" = "yellow3",
+                                "Finland" = "olivedrab"))
+
+Uarct_numXsumROH 
+
+
+Uarct_groupXfROH <- ggplot(ROHdata, aes(x=group, y=FROH_genome, colour=Population)) +
+  geom_point(size=3, alpha=0.8) +   
+  geom_violin() +         #adding this makes it a violin plot                    
+  scale_color_manual(values = c("lower48" = "sienna",
+                                "AK" = "lightpink4", 
+                                "Japan" = "plum3",
+                                "Euro" = "orange", 
+                                "Sweden" = "yellow3",
+                                "Finland" = "olivedrab"))
+Uarct_groupXfROH 
+
+  
