@@ -1,0 +1,114 @@
+#!/bin/bash
+#SBATCH -N 1 # number of nodes
+#SBATCH -n 16 # number of cores
+#SBATCH --mem=48G
+#SBATCH --job-name="Umari_array_map"
+#SBATCH --mail-type=END
+#SBATCH --partition=computeq
+#SBATCH --mail-user=hrclndnn@memphis.edu
+#SBATCH -t 14-00:00:00
+#SBATCH -a 0-81
+
+module load bwa
+module load samtools
+module load picard
+module load sratoolkit
+module load gatk
+module load bcftools
+
+files=(SRR517013
+SRR518661
+SRR518662
+SRR518670
+SRR518671
+SRR518672
+SRR518673
+SRR518676
+SRR518677
+SRR518678
+SRR518679
+SRR518680
+SRR518684
+SRR518685
+SRR518686
+SRR518687
+SRR518688
+SRR518689
+SRR518699
+SRR518700
+SRR518701
+SRR518702
+SRR518703
+SRR827537
+SRR827574
+SRR827584
+SRR827585
+SRR827587
+SRR827588
+SRR827600
+SRR942197
+SRR942203
+SRR942211
+SRR942218
+SRR942235
+SRR942239
+SRR942240
+SRR942246
+SRR942248
+SRR942249
+SRR942251
+SRR942253
+SRR942260
+SRR942265
+SRR942266
+SRR942273
+SRR942275
+SRR942276
+SRR942277
+SRR942278
+SRR942279
+SRR942280
+SRR942281
+SRR942282
+SRR942283
+SRR942284
+SRR942285
+SRR942286
+SRR942287
+SRR942288
+SRR942289
+SRR942290
+SRR942291
+SRR942292
+SRR942293
+SRR942294
+SRR942295
+SRR942296
+SRR942297
+SRR942298
+SRR942299
+SRR942300
+SRR942301
+SRR942302
+SRR942303
+SRR942304
+SRR942305
+SRR942306
+SRR942307
+SRR942308
+SRR942309
+SRR942310
+SRR947747)
+
+file=${files[$SLURM_ARRAY_TASK_ID]}
+
+#00 pull samples from NCBI
+#could set up as call to script
+
+#cd /home/hrclndnn/sra_local/
+#prefetch --max-size 100G ${file}
+#fastq-dump --split-files ${file}
+
+
+#Align to reference genome
+bwa mem -M -t 16 /home/mdpllard/Genomes/Ursus_maritimus.fna /home/hrclndnn/WGSUmari/00_genomes/${file}_1.fastq /home/hrclndnn/WGSUmari/00_genomes/${file}_2.fastq > /home/hrclndnn/WGSUmari/01_mappedSam/${file}_mapped.sam
